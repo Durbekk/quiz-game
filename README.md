@@ -1,2 +1,2 @@
-quiz-game
+quiz-gamebot
 you can solve tests
