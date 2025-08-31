@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)http://127.0.0.1:5500/easymath.html? -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Quiz - Grade 1-4 Easy</title>
+<style>
+body {
+  font-family: 'Comic Sans MS', Arial, sans-serif;
+  background: linear-gradient(120deg, #f6d365, #fda085);
+  margin:0; padding:0;
+  display:flex; justify-content:center; align-items:center;
+  min-height:100vh;
+}
+.container {
+  background: transparent;
+  border-radius:25px;
+  
+  padding:40px;
+  width:90%;
+  max-width:720px;
+  text-align:center;
+}
+h1 {
+  color:#ff6f61;
+  margin-bottom:30px;
+  font-size:28px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:12px;
+}
+.grid button {
+  padding:18px;
+  font-size:16px;
+  border:none;
+  border-radius:12px;
+  background:#ff6f61;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+  font-weight:bold;
+}
+.grid button:hover {background:#ff9671; transform:scale(1.05);}
+.grid button:disabled {background:#ccc; cursor:not-allowed;}
+#questionBox {display:none; margin-top:25px;}
+#questionBox h2 {font-size:20px; color:#333; margin-bottom:15px;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#ff6f61;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+  font-weight:bold;
+}
+.options button:hover {background:#ff9671;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1> Grade Easy Math Quiz</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 easy math questions
+const questions=[
+{q:"5 + 3 = ?", opts:["7","8","9","6"], ans:1},
+{q:"10 - 4 = ?", opts:["5","6","7","8"], ans:1},
+{q:"3 × 2 = ?", opts:["5","6","7","8"], ans:1},
+{q:"12 ÷ 4 = ?", opts:["2","3","4","5"], ans:1},
+{q:"7 + 6 - 5 = ?", opts:["7","8","9","10"], ans:1},
+{q:"4 × 3 + 2 = ?", opts:["12","14","16","10"], ans:1},
+{q:"9 - 5 + 2 = ?", opts:["5","6","7","8"], ans:2},
+{q:"8 ÷ 2 + 3 = ?", opts:["5","6","7","8"], ans:2},
+{q:"(2 + 3) × 2 = ?", opts:["8","10","12","6"], ans:1},
+{q:"15 - (3 + 4) = ?", opts:["8","9","10","11"], ans:1},
+{q:"6 + 4 - 3 = ?", opts:["6","7","8","9"], ans:2},
+{q:"5 × 2 - 4 = ?", opts:["6","7","8","9"], ans:0},
+{q:"18 ÷ 3 = ?", opts:["5","6","7","8"], ans:1},
+{q:"7 + 2 × 3 = ?", opts:["12","13","14","15"], ans:2},
+{q:"9 - 3 × 2 = ?", opts:["3","4","5","6"], ans:2},
+{q:"(5 + 5) ÷ 2 = ?", opts:["4","5","6","7"], ans:1},
+{q:"8 + 7 - 5 = ?", opts:["9","10","11","12"], ans:1},
+{q:"6 × 3 = ?", opts:["16","17","18","19"], ans:2},
+{q:"14 ÷ 2 + 5 = ?", opts:["11","12","13","14"], ans:2},
+{q:"3 × (4 + 2) = ?", opts:["16","18","20","22"], ans:1}
+];
+
+// 10 random prizes
+const prizes=["Sticker","Small Gift","Drink Coupon","FastFood","Earphones","Bonus Card"," Phone Accessory"," T-shirt","Movie Ticket"," Bike Accessory"];
+
+// shuffle questions + prizes
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+
+// create 30 buttons
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#ccc";}
+};
+grid.appendChild(btn);
+});
+
+function showQuestion(q,parentBtn){
+questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#ccc";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

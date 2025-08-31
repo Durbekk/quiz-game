@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://127.0.0.1:5500/uzgram.html? -->
+<html lang="uz"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O‘zbek Grammatika - Random Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #65e0f6, #fda085);
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 15px;
+      max-width: 800px;
+      margin: 20px auto;
+    }
+    .grid button {
+      padding: 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #2ab19f;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .grid button:hover {
+      background: #fe7bf7;
+      transform: scale(1.05);
+    }
+    .grid button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .question-box {
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: none;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #ff7e5f;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-back {
+      display: block;
+      margin: 30px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #999;
+      color: white;
+      cursor: pointer;
+    }
+    .btn-back:hover {
+      background: #777;
+    }
+    .correct {
+      background-color: green !important;
+    }
+    .wrong {
+      background-color: red !important;
+    }
+  </style>
+</head>
+<body>
+  <h1> O‘zbek Grammatika - Quiz</h1>
+
+  <div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+
+  <div class="question-box" id="questionBox">
+    <h2 id="questionText"></h2>
+    <div class="options" id="options"></div>
+  </div>
+
+  <button class="btn-back" onclick="location.href=&#39;index.html&#39;">⬅ Orqaga</button>
+
+  <script>
+    const items = [];
+
+    // 20 ta savol
+    const questions = [
+      {q: '“Men boryapman” gapida qaysi zamon?', opts:['Hozirgi davomiy','O‘tgan','Kelasi','Buyruq'], ans:0},
+      {q: '“Kitob o‘qildi” gapida fe’l qaysi nisbatda?', opts:['O‘timli','Majhul','Orttirma','Buyruq'], ans:1},
+      {q: '“Uchib ketdi” nechta fe’l?', opts:['1','2','3','4'], ans:1},
+      {q: '“Chiroyli” so‘zi qaysi turkum?', opts:['Ot','Sifat','Ravish','Olmosh'], ans:1},
+      {q: '“Men kitob o‘qidim” – fe’l shaxs-soni?', opts:['1-shaxs birlik','1-shaxs ko‘plik','3-shaxs birlik','2-shaxs birlik'], ans:0},
+      {q: '“Yozilmoqda” – bu qaysi zamon?', opts:['Hozirgi davomiy','O‘tgan','Kelasi','Buyruq'], ans:0},
+      {q: '“Kitobxon” so‘zi qanday yasalgan?', opts:['Qo‘shimcha orqali','So‘z birikmasi','Qo‘shma so‘z','So‘zlashuv'], ans:0},
+      {q: '“Men va sen” – qaysi turkum?', opts:['Ot','Olmosh','Ravish','Sifat'], ans:1},
+      {q: '“Yugurib bordi” – nechta fe’l?', opts:['1','2','3','4'], ans:1},
+      {q: '“Yaxshi” so‘zi qanday turkum?', opts:['Sifat','Ot','Ravish','Olmosh'], ans:0},
+      {q: '“Biz bordik” – fe’l qaysi zamon?', opts:['O‘tgan','Kelasi','Hozirgi davomiy','Buyruq'], ans:0},
+      {q: '“Ular kelishdi” – fe’l nechanchi shaxs?', opts:['1','2','3','4'], ans:2},
+      {q: '“Uyda” so‘zi qanday qo‘shimcha bilan yasalgan?', opts:['-da','-ni','-dan','-ga'], ans:0},
+      {q: '“Sen o‘qi” – qanday gap turi?', opts:['Buyruq','So‘roq','Hikoya','Undov'], ans:0},
+      {q: '“Kitobni o‘qidingmi?” gap turi?', opts:['So‘roq','Buyruq','Undov','Hikoya'], ans:0},
+      {q: '“Men ham bordim” – “ham” so‘zi nima?', opts:['Yuklama','Bog‘lovchi','Olmosh','Sifat'], ans:0},
+      {q: '“Yangi uy” – bu nima?', opts:['So‘z birikmasi','Gap','Qo‘shma so‘z','Ot birikmasi'], ans:0},
+      {q: '“Men keldim” – fe’l zamoni?', opts:['O‘tgan','Kelasi','Hozirgi','Buyruq'], ans:0},
+      {q: '“Shirinroq” qanday daraja?', opts:['Oddiy','Qiyosiy','Orttirma','Eng yuqori'], ans:1},
+      {q: '“O‘quvchi” so‘zi qaysi qo‘shimcha bilan yasalgan?', opts:['-chi','-lik','-siz','-kor'], ans:0},
+    ];
+
+    // 10 ta priz
+    const prizes = [
+      " Sovg‘a: Kitob",
+      " Sovg‘a: Ruchka",
+      " Sovg‘a: Daftar",
+      " Sovg‘a: Shirinlik",
+      " Sovg‘a: Futbolka",
+      " Sovg‘a: Qalam",
+      " Sovg‘a: Chiroyli daftar",
+      " Sovg‘a: Kalendarya",
+      " Sovg‘a: Sumka",
+      " Sovg‘a: Stiker to‘plami"
+    ];
+
+    // Aralashtirib itemsga joylash
+    items.push(...questions.map(q=>({type:'question', data:q})));
+    items.push(...prizes.map(p=>({type:'prize', data:p})));
+    items.sort(()=>Math.random()-0.5);
+
+    const grid = document.getElementById("grid");
+    const questionBox = document.getElementById("questionBox");
+    const qText = document.getElementById("questionText");
+    const optionsDiv = document.getElementById("options");
+
+    items.forEach((item, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = i+1;
+      btn.onclick = () => openItem(item, btn);
+      grid.appendChild(btn);
+    });
+
+    function openItem(item, btn){
+      btn.disabled = true;
+      if(item.type === 'prize'){
+        questionBox.style.display = "block";
+        qText.textContent = item.data;
+        optionsDiv.innerHTML = "";
+      } else {
+        showQuestion(item.data, btn);
+      }
+    }
+
+    function showQuestion(q, btn){
+      questionBox.style.display = "block";
+      qText.textContent = q.q;
+      optionsDiv.innerHTML = "";
+      q.opts.forEach((opt, idx)=>{
+        const obtn = document.createElement("button");
+        obtn.textContent = opt;
+        obtn.onclick = ()=>{
+          if(idx === q.ans){
+            obtn.classList.add("correct");
+          } else {
+            obtn.classList.add("wrong");
+          }
+          setTimeout(()=>{
+            questionBox.style.display="none";
+          },3000);
+        }
+        optionsDiv.appendChild(obtn);
+      });
+    }
+  </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)http://127.0.0.1:5500/hardmath.html? -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Quiz - Grade 5-9 Hard</title>
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #8360c3, #2ebf91);
+  margin:0; padding:0;
+  display:flex; justify-content:center; align-items:center;
+  min-height:100vh;
+}
+.container {
+  background:transparent;
+  border-radius:25px;
+  
+  padding:40px;
+  width:90%;
+  max-width:720px;
+  text-align:center;
+}
+h1 {
+  color:#8360c3;
+  margin-bottom:30px;
+  font-size:28px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:12px;
+}
+.grid button {
+  padding:18px;
+  font-size:16px;
+  border:none;
+  border-radius:12px;
+  background:#8360c3;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+  font-weight:bold;
+}
+.grid button:hover {background:#a37ddb; transform:scale(1.05);}
+.grid button:disabled {background:#ccc; cursor:not-allowed;}
+#questionBox {display:none; margin-top:25px;}
+#questionBox h2 {font-size:20px; color:#333; margin-bottom:15px;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#8360c3;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+  font-weight:bold;
+}
+.options button:hover {background:#a37ddb;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔢 Grade 5–9 Hard Math Quiz</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 hard math questions (5–9 grade)
+const questions=[
+{q:"Solve: 5x + 7 = 32. x = ?", opts:["4","5","6","7"], ans:2},
+{q:"12 × (3 + 5) = ?", opts:["88","96","84","92"], ans:1},
+{q:"If 2/3 of a number is 18, what is the number?", opts:["26","27","28","29"], ans:1},
+{q:"Simplify: 8 × (2 + 6) - 10", opts:["54","56","58","60"], ans:1},
+{q:"Area of rectangle: length 15, width 9?", opts:["130","135","140","145"], ans:1},
+{q:"Volume of cube: side 5?", opts:["100","120","125","130"], ans:2},
+{q:"If a train goes 80 km/h, how far in 3.5 hours?", opts:["270","280","290","300"], ans:1},
+{q:"Evaluate: 18 ÷ (3 + 3)", opts:["2","3","4","5"], ans:2},
+{q:"Solve: 3x - 7 = 20. x = ?", opts:["8","9","10","11"], ans:3},
+{q:"Subtract: 7/8 - 3/4", opts:["1/8","1/4","3/8","1/2"], ans:2},
+{q:"John has 7 packs of pencils, 12 each. How many pencils?", opts:["78","80","84","86"], ans:2},
+{q:"A rectangle: length 18, width 12. Perimeter?", opts:["58","60","62","64"], ans:1},
+{q:"Solve: 4(x+5)=36. x=?", opts:["3","4","5","6"], ans:1},
+{q:"A car travels 120 km in 2 hours. Speed?", opts:["50 km/h","55 km/h","60 km/h","65 km/h"], ans:2},
+{q:"Factorize: x^2 + 7x + 10", opts:["(x+2)(x+5)","(x+1)(x+10)","(x+2)(x+3)","(x+5)(x+5)"], ans:0},
+{q:"Solve: 3/4 × 32 = ?", opts:["22","23","24","25"], ans:2},
+{q:"What is 9^2 - 40?", opts:["41","42","43","44"], ans:1},
+{q:"If a number minus 12 equals 18, number = ?", opts:["28","29","30","31"], ans:2},
+{q:"Simplify: 9 × (6 + 3) ÷ 3", opts:["24","25","26","27"], ans:3},
+{q:"Convert 0.8 to fraction", opts:["3/4","4/5","5/6","7/8"], ans:1}
+];
+
+// 10 random prizes
+const prizes=["🎁 Sticker","🎉 Small Gift","🥤 Drink Coupon","🍔 FastFood","🎧 Earphones","💳 Bonus Card","📱 Phone Accessory","👕 T-shirt","🎟 Movie Ticket","🚲 Bike Accessory"];
+
+// shuffle questions + prizes
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+
+// create 30 buttons
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#ccc";}
+};
+grid.appendChild(btn);
+});
+function showQuestion(q,parentBtn){
+questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#ccc";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

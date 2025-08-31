@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://127.0.0.1:5500/rubrend.html? -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Русские Бренды - Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ffee00, #0400ff);
+  margin: 0; padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  text-align: center;
+  background: transparent;
+  padding: 30px;
+  border-radius: 20px;
+  
+  width: 90%;
+  max-width: 700px;
+}
+h1 {margin-bottom: 20px; color: #333;}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6,1fr); 
+  gap: 10px;
+}
+.grid button {
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #30aca5;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grid button:hover {background: #2bff00;}
+.grid button:disabled {background: #999; cursor: not-allowed;}
+#questionBox {display:none; margin-top:20px;}
+#questionBox h2 {font-size:18px; color:#333;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#feb47b;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.options button:hover {background:#ff7754;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1> Русские Бренды</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 ta unikal brend savollari
+const questions=[
+{q:"Какой бренд производит смартфоны в России?", opts:["BQ","Samsung","Apple","LG"], ans:0},
+{q:"Какой бренд производит телевизоры в России?", opts:["Rolsen","Sony","LG","Samsung"], ans:0},
+{q:"QIWI — это?", opts:["Платежная система","Телефон","Машина","Компьютер"], ans:0},
+{q:"Beeline известен в России как?", opts:["Мобильный оператор","Телефон","Компьютер","Машина"], ans:0},
+{q:"АвтоВАЗ производит?", opts:["Машины","Телефон","Телевизор","Компьютер"], ans:0},
+{q:"Азбука Вкуса — это?", opts:["Супермаркет","Телефон","Компьютер","Машина"], ans:0},
+{q:"Pepsi — это?", opts:["Напиток","Машина","Телефон","Компьютер"], ans:0},
+{q:"Yota — это бренд в области?", opts:["Телеком","Продукты","Машины","Мода"], ans:0},
+{q:"Beeline работает в области?", opts:["Телекоммуникации","Мода","Продукты","Машина"], ans:0},
+{q:"CocaCola — это?", opts:["Напиток","Телефон","Машина","Компьютер"], ans:0},
+{q:"Nestle производит?", opts:["Продукты","Электроника","Машины","Телефон"], ans:0},
+{q:"Samsung производит?", opts:["Телефоны","Машины","Напитки","Компьютеры"], ans:0},
+{q:"LG производит?", opts:["Телевизоры","Машины","Напитки","Компьютеры"], ans:0},
+{q:"Apple производит?", opts:["Телефоны","Машины","Напитки","Компьютеры"], ans:0},
+{q:"KFC — это?", opts:["FastFood","Телефон","Машина","Компьютер"], ans:0},
+{q:"Burger King — это?", opts:["FastFood","Телефон","Машина","Компьютер"], ans:0},
+{q:"PepsiCo производит?", opts:["Напитки","Телефон","Машина","Компьютер"], ans:0},
+{q:"Rolsen TV в какой области?", opts:["Телевизоры","Телефон","Машина","Компьютер"], ans:0},
+{q:"АвтоВАЗ известен в городе?", opts:["Тольятти","Лондон","Москва","Берлин"], ans:0},
+{q:"Услуги Beeline включают?", opts:["Мобильная связь","Телефон","Машина","Компьютер"], ans:0}
+];
+
+// 10 ta random priz
+const prizes=[
+" Подарок: скидка 10%",
+" Приз: гаджет",
+" Bonus: CocaCola set",
+" FastFood купон",
+" Наушники",
+" Бонус карта 100,000 сум",
+" Powerbank",
+" Футболка бренда",
+"Билет в кино",
+" Мини-аксессуар для велосипеда"
+];
+
+// Aralashtirish: 20 savol + 10 prize
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+// 30 tugma
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#0000";}
+};
+grid.appendChild(btn);
+});
+
+function showQuestion(q,parentBtn){
+questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#000";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

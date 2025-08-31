@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://127.0.0.1:5500/rugram.html? -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Русская Грамматика - Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #5fff67, #7bfafe);
+  margin: 0; padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  text-align: center;
+  background: transparent;
+  padding: 30px;
+  border-radius: 20px;
+ 
+  width: 90%;
+  max-width: 700px;
+}
+h1 {margin-bottom: 20px; color: #333;}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  gap: 10px;
+}
+.grid button {
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #ff4747;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grid button:hover {background: #ff7e5f;}
+.grid button:disabled {background: #999; cursor: not-allowed;}
+#questionBox {display:none; margin-top:20px;}
+#questionBox h2 {font-size:18px; color:#333;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#feb47b;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.options button:hover {background:#ff7e5f;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1> Русская Грамматика</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 ta unikal grammar savol
+const questions=[
+{q:"Выберите правильную форму глагола: Я ___ книгу.", opts:["читаю","читать","читаешь","читает"], ans:0},
+{q:"Выберите правильное слово: Моя сестра ___ высокая.", opts:["очень","оченьо","оченьный","оченье"], ans:0},
+{q:"Выберите правильный падеж: Я вижу ___.", opts:["машину","машина","машине","машины"], ans:0},
+{q:"Выберите правильную форму: Они ___ дома.", opts:["сидят","сидишь","сидит","сидим"], ans:0},
+{q:"Выберите правильное слово: Это ___ стол.", opts:["мой","моя","моё","мои"], ans:0},
+{q:"Выберите форму глагола: Он ___ в школу.", opts:["идёт","иду","идешь","идём"], ans:0},
+{q:"Выберите правильный вариант: У меня ___ книга.", opts:["есть","естьу","естьы","ест"], ans:0},
+{q:"Выберите правильное слово: Мы ___ студенты.", opts:["являемся","являюсь","являетесь","являет"], ans:0},
+{q:"Выберите правильный вариант: Она ___ красивая.", opts:["очень","оченьо","оченьный","оченье"], ans:0},
+{q:"Выберите правильный падеж: Я иду в ___ школу.", opts:["свою","свой","своё","свои"], ans:0},
+{q:"Выберите правильное слово: Я люблю ___ музыку.", opts:["классическую","классический","классическийо","классические"], ans:0},
+{q:"Выберите правильный глагол: Мы ___ домой.", opts:["идём","иду","идёте","идёт"], ans:0},
+{q:"Выберите правильное слово: Ты ___ мой друг.", opts:["мой","моя","моё","мои"], ans:0},
+{q:"Выберите правильную форму: Он ___ студент.", opts:["является","является","являемся","являюсь"], ans:0},
+{q:"Выберите правильный падеж: Я вижу ___ машину.", opts:["новую","новый","новое","новы"], ans:0},
+{q:"Выберите правильный вариант: Мы ___ учителя.", opts:["любим","любишь","любит","любимы"], ans:0},
+{q:"Выберите правильное слово: Я говорю на ___ языке.", opts:["русском","русский","русска","русские"], ans:0},
+{q:"Выберите форму глагола: Он ___ дома.", opts:["сидит","сидят","сидишь","сидим"], ans:0},
+{q:"Выберите правильное слово: Это ___ мой друг.", opts:["точно","точна","точное","точные"], ans:0},
+{q:"Выберите правильный вариант: Мы идём в ___ школу.", opts:["новую","новый","новое","новы"], ans:0}
+];
+
+// 10 ta random priz
+const prizes=[
+" Подарок: скидка 10%",
+" Приз: гаджет",
+" Bonus: CocaCola set",
+" FastFood купон",
+" Наушники",
+" Бонус карта 100,000 сум",
+"Powerbank",
+" Футболка бренда",
+" Билет в кино",
+" Мини-аксессуар для велосипеда"
+];
+// Aralashtirish: 20 savol + 10 prize
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+
+// 30 tugma
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#999";}
+};
+grid.appendChild(btn);
+});
+
+function showQuestion(q,parentBtn){
+questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#999";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://127.0.0.1:5500/engram.html? -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Grammar - Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1edf4e, #fbff00);
+  margin: 0; padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  text-align: center;
+  background: transparent;
+  padding: 30px;
+  border-radius: 20px;
+  
+  width: 90%;
+  max-width: 700px;
+}
+h1 {margin-bottom: 20px; color: #333;}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  gap: 10px;
+}
+.grid button {
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #00ffdd;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grid button:hover {background: #5f6fff;}
+.grid button:disabled {background: #ffffff; cursor: not-allowed;}
+#questionBox {display:none; margin-top:20px;}
+#questionBox h2 {font-size:18px; color:#333;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#92d43a;
+  color:rgb(255, 255, 255);
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.options button:hover {background:#5f84ff;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1> English Grammar</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 ta qiyinroq grammar savol
+const questions=[
+{q:"If I ___ earlier, I wouldn't have missed the train.", opts:["had left","leave","have left","leaves"], ans:0},
+{q:"She wishes she ___ more time to finish her project.", opts:["had","has","have","having"], ans:0},
+{q:"He is used to ___ up early.", opts:["getting","get","got","gets"], ans:0},
+{q:"By next year, they ___ living here for a decade.", opts:["will have been","will be","have been","are"], ans:0},
+{q:"Choose correct: I prefer tea ___ coffee.", opts:["to","than","over","with"], ans:0},
+{q:"Had I known, I ___ you.", opts:["would have helped","helped","would help","helps"], ans:0},
+{q:"She insisted that he ___ at the meeting.", opts:["be","is","was","been"], ans:0},
+{q:"If he ___ harder, he would have passed.", opts:["had studied","studied","studies","study"], ans:0},
+{q:"It's high time we ___ to the airport.", opts:["left","leave","have left","leaving"], ans:0},
+{q:"They prevented him ___ the building.", opts:["entering","to enter","entered","enters"], ans:0},
+{q:"I look forward ___ from you soon.", opts:["to hearing","hearing","for hearing","to hear"], ans:0},
+{q:"She demanded that he ___ the documents immediately.", opts:["submit","submits","submitted","submitting"], ans:0},
+{q:"He hardly ___ any mistakes in the test.", opts:["makes","make","made","making"], ans:0},
+{q:"Choose correct: I am not accustomed ___ such behavior.", opts:["to","with","at","for"], ans:0},
+{q:"If she ___ earlier, she wouldn't be late.", opts:["had left","left","leaves","would leave"], ans:0},
+{q:"I wish I ___ more confident during the interview.", opts:["were","was","am","be"], ans:0},
+{q:"Had it not been for her advice, I ___ failed.", opts:["would have","have","had","will have"], ans:0},
+{q:"He suggested that we ___ a break.", opts:["take","takes","took","taking"], ans:0},
+{q:"It's necessary that she ___ present at the meeting.", opts:["be","is","was","been"], ans:0},
+{q:"Choose correct phrasal verb: He ___ up smoking last year.", opts:["gave","gave up","gave out","give"], ans:1}
+];
+
+// 10 ta random priz
+const prizes=[
+" Prize: 10% discount",
+" Gadget",
+" Bonus: drink",
+" FastFood coupon",
+" Headphones",
+" Bonus card 100 USD",
+" Powerbank",
+" T-shirt",
+" Movie ticket",
+" Bike accessory"
+];
+// Aralashtirish: 20 savol + 10 priz
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+
+// 30 tugma
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#999";}
+};
+grid.appendChild(btn);
+});
+
+function showQuestion(q,parentBtn){
+questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#999";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

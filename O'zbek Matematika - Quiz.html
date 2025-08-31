@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://127.0.0.1:5500/uzmath.html? -->
+<html lang="uz"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O'zbek Matematika - Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #36d1dc, #5b86e5);
+  margin: 0; padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  text-align: center;
+  background: transparent;
+  padding: 30px;
+  border-radius: 20px;
+  
+  width: 90%;
+  max-width: 700px;
+}
+h1 {margin-bottom: 20px; color: #333;}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  gap: 10px;
+}
+.grid button {
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #5b86e5;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grid button:hover {background: #36d1dc;}
+.grid button:disabled {background: #999; cursor: not-allowed;}
+#questionBox {display:none; margin-top:20px;}
+#questionBox h2 {font-size:18px; color:#333;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#5b86e5;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.options button:hover {background:#36d1dc;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1> O'zbek Matematika</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 ta qiyinroq savol/masala
+const questions=[
+{q:"Agar x^2 - 5x + 6 = 0, x ni toping.", opts:["2 va 3","1 va 6","-2 va -3","3 va 4"], ans:0},
+{q:"3(2x - 5) = 9, x ni toping.", opts:["7","2","-1","5"], ans:1},
+{q:"5! nechiga teng?", opts:["120","24","60","720"], ans:0},
+{q:"2^5 + 3^3 = ?", opts:["35","34","31","37"], ans:3},
+{q:"Agar 7x + 3 = 31, x ni toping.", opts:["4","5","3","6"], ans:0},
+{q:"15 ning kvadrat ildizi?", opts:["√15","3.872","5","25"], ans:2},
+{q:"(x-1)(x+2)=0, x ni toping.", opts:["1 va -2","-1 va 2","2 va -1","0 va 3"], ans:0},
+{q:"12 ÷ (2 + 1) = ?", opts:["4","3","5","6"], ans:0},
+{q:"Agar 3x - 7 = 5, x ni toping.", opts:["4","3","5","2"], ans:0},
+{q:"2x + 3 = 11, x ni toping.", opts:["4","5","3","6"], ans:0},
+{q:"Agar 3^x = 27, x ni toping.", opts:["3","2","4","5"], ans:0},
+{q:"10 + 2 × 5 = ?", opts:["20","30","15","25"], ans:2},
+{q:"5 × (4 + 6) = ?", opts:["50","40","60","45"], ans:0},
+{q:"Agar x/3 = 5, x ni toping.", opts:["15","10","20","12"], ans:0},
+{q:"9 × 9 - 9 = ?", opts:["72","81","63","90"], ans:2},
+{q:"2^3 × 3^2 = ?", opts:["72","36","48","64"], ans:0},
+{q:"Agar x + y = 10 va x = 6, y ni toping.", opts:["4","5","3","6"], ans:0},
+{q:"√64 + √9 = ?", opts:["11","10","9","12"], ans:0},
+{q:"3(4 + x) = 21, x ni toping.", opts:["3","2","4","5"], ans:0},
+{q:"Agar 2x - 7 = 5, x ni toping.", opts:["6","5","7","4"], ans:0}
+];
+
+// 10 ta random priz
+const prizes=[
+" Prit: 10% chegirma",
+" Gadjet",
+" Bonus: ichimlik",
+" FastFood kupon",
+" Quloqchin",
+" Bonus karta 100,000 so'm",
+" Powerbank",
+" Futbolka",
+" Kino bileti",
+" Velosiped aksessuari"
+];
+
+// Aralashtirish: 20 savol + 10 priz
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+
+// 30 tugma
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#999";}
+};
+grid.appendChild(btn);
+});
+
+function showQuestion(q,parentBtn){
+  questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#999";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>

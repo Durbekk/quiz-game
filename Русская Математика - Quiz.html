@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://127.0.0.1:5500/rumath.html? -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Русская Математика - Quiz</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #36d1dc, #5b86e5);
+  margin: 0; padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  text-align: center;
+  background: transparent;
+  padding: 30px;
+  border-radius: 20px;
+  
+  width: 90%;
+  max-width: 700px;
+}
+h1 {margin-bottom: 20px; color: #333;}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  gap: 10px;
+}
+.grid button {
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #5b86e5;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grid button:hover {background: #36d1dc;}
+.grid button:disabled {background: #999; cursor: not-allowed;}
+#questionBox {display:none; margin-top:20px;}
+#questionBox h2 {font-size:18px; color:#333;}
+.options button {
+  display:block;
+  width:100%;
+  margin:5px 0;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#5b86e5;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.options button:hover {background:#36d1dc;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1> Русская Математика</h1>
+<div class="grid" id="grid"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button><button>11</button><button>12</button><button>13</button><button>14</button><button>15</button><button>16</button><button>17</button><button>18</button><button>19</button><button>20</button><button>21</button><button>22</button><button>23</button><button>24</button><button>25</button><button>26</button><button>27</button><button>28</button><button>29</button><button>30</button></div>
+<div id="questionBox">
+<h2 id="qText"></h2>
+<div class="options" id="options"></div>
+</div>
+</div>
+
+<script>
+const grid=document.getElementById("grid");
+const questionBox=document.getElementById("questionBox");
+const qText=document.getElementById("qText");
+const optionsDiv=document.getElementById("options");
+
+// 20 ta qiyinroq savol/masala
+const questions=[
+{q:"Решите уравнение: x^2 - 7x + 12 = 0", opts:["3 и 4","2 и 5","1 и 12","-3 и -4"], ans:0},
+{q:"Если 5x - 9 = 16, x = ?", opts:["5","4","6","3"], ans:0},
+{q:"Вычислите 7! ?", opts:["5040","720","120","40320"], ans:0},
+{q:"2^4 + 3^3 = ?", opts:["19","35","27","17"], ans:1},
+{q:"Решите: 3x + 8 = 20", opts:["4","5","6","3"], ans:2},
+{q:"Квадратный корень из 81?", opts:["8","9","10","7"], ans:1},
+{q:"Решите уравнение: (x-2)(x+3)=0", opts:["2 и -3","-2 и 3","3 и -2","0 и 5"], ans:0},
+{q:"Вычислите: 18 ÷ (3 + 3)", opts:["3","2","4","5"], ans:0},
+{q:"Если 2x - 5 = 9, x = ?", opts:["7","5","6","8"], ans:2},
+{q:"Решите: 4x + 1 = 13", opts:["3","2","4","5"], ans:2},
+{q:"2^x = 16, x = ?", opts:["4","5","3","6"], ans:0},
+{q:"10 + 2 × 6 = ?", opts:["22","20","24","26"], ans:0},
+{q:"5 × (3 + 7) = ?", opts:["50","55","45","60"], ans:0},
+{q:"Если x/4 = 3, x = ?", opts:["12","10","15","14"], ans:0},
+{q:"9 × 8 - 9 = ?", opts:["63","72","81","54"], ans:0},
+{q:"2^3 × 3^3 = ?", opts:["216","72","128","144"], ans:0},
+{q:"x + y = 15, если x = 9, y = ?", opts:["6","5","7","8"], ans:0},
+{q:"√100 + √16 = ?", opts:["14","15","13","12"], ans:0},
+{q:"3(2 + x) = 18, x = ?", opts:["4","5","3","6"], ans:2},
+{q:"Если 2x - 3 = 11, x = ?", opts:["7","6","8","5"], ans:2}
+];
+
+// 10 ta random priz
+const prizes=[
+"🎁 Приз: скидка 10%",
+"🎉 Гаджет",
+"🥤 Bonus: напиток",
+"🍔 FastFood купон",
+"🎧 Наушники",
+"💳 Бонус карта 100,000 сум",
+"📱 Powerbank",
+"👕 Футболка",
+"🎟 Билет в кино",
+"🚲 Мини-аксессуар"
+];
+
+// Aralashtirish: 20 savol + 10 priz
+let items=[...questions.map(q=>({type:"q",data:q})), ...prizes.map(p=>({type:"p",data:p}))];
+items=items.sort(()=>Math.random()-0.5);
+
+// 30 tugma
+items.forEach((item,i)=>{
+const btn=document.createElement("button");
+btn.textContent=i+1;
+btn.onclick=()=>{
+btn.disabled=true;
+if(item.type==="q"){showQuestion(item.data,btn);}
+else{alert(item.data); btn.style.background="#999";}
+};
+grid.appendChild(btn);
+});
+
+function showQuestion(q,parentBtn){
+questionBox.style.display="block";
+qText.textContent=q.q;
+optionsDiv.innerHTML="";
+q.opts.forEach((opt,idx)=>{
+const obtn=document.createElement("button");
+obtn.textContent=opt;
+obtn.onclick=()=>{
+if(idx===q.ans){parentBtn.style.background="green";}
+else{parentBtn.style.background="red";}
+setTimeout(()=>{
+questionBox.style.display="none";
+parentBtn.style.background="#999";
+parentBtn.disabled=true;
+},1000);
+};
+optionsDiv.appendChild(obtn);
+});
+}
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>
